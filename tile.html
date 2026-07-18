@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title id="pageTitle">Tile — Grham Tiles</title>
+<meta name="description" id="pageDescription" content="Handmade Athangudi tile from Grham Tiles.">
+<link rel="icon" href="assets/images/mark.png" type="image/png">
+<link rel="stylesheet" href="assets/css/styles.css">
+<style>::-webkit-scrollbar{width:0;height:0}</style>
+</head>
+<body>
+
+<div class="detail-header-wrap">
+  <div class="detail-header-fade"></div>
+  <header class="detail-header">
+    <a href="tiles.html" class="back-link">← Tiles</a>
+    <img class="mark-icon-desktop" src="assets/images/mark-white.png" alt="" style="height:20px">
+    <button type="button" class="hamburger" id="menuOpen" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-head">
+    <img src="assets/images/logo-horizontal-white.png" alt="Grham Tiles">
+    <button type="button" class="mobile-menu-close" id="menuClose" aria-label="Close menu">×</button>
+  </div>
+  <div class="mobile-menu-body">
+    <nav class="mobile-menu-primary" aria-label="Mobile primary">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="tiles.html">Tiles</a>
+      <a href="services.html">Services</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <nav class="mobile-menu-secondary" aria-label="Mobile secondary">
+      <a href="terms.html">Terms & Conditions</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </nav>
+  </div>
+  <div class="mobile-menu-social">
+    <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.3" cy="6.7" r="1" fill="#fff" stroke="none"></circle></svg></a>
+    <a href="#" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><circle cx="12" cy="12" r="9"></circle><path d="M13.5 21v-7h2.2l.3-2.6h-2.5V9.7c0-.75.2-1.26 1.28-1.26h1.37V6.1c-.24-.03-1.05-.1-2-.1-1.98 0-3.33 1.2-3.33 3.4v1.9H8.5v2.6h2.27V21"></path></svg></a>
+    <a href="#" aria-label="Pinterest"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 19c.5-1.7 1.3-4.6 1.7-6.2M12 12c-.5 2-2 6.6-2 6.6M12 12a3 3 0 1 0 3-3.6c-1.6-.3-3 .6-3.4 2"></path></svg></a>
+  </div>
+</div>
+
+<main>
+  <div class="tile-detail-grid">
+    <div>
+      <div class="tile-detail-media" id="tileMedia">
+        <span>Tile photo — full view, coming soon</span>
+      </div>
+      <div class="tile-detail-thumbs" id="tileThumbs"></div>
+    </div>
+    <div class="tile-detail-side">
+      <div class="tile-detail-body">
+        <div class="eyebrow-row">
+          <img src="assets/images/mark.png" alt="">
+          <span class="eyebrow" id="tileEyebrow" style="color:var(--red)"></span>
+        </div>
+        <h1 id="tileName"></h1>
+        <p class="intro" id="tileTagline"></p>
+
+        <div style="margin-top:24px">
+          <div class="tile-detail-label">Available colorways</div>
+          <div class="swatch-dots" id="tileColorways" style="gap:8px"></div>
+        </div>
+
+        <div style="margin-top:32px">
+          <table class="specs-table">
+            <tbody id="tileSpecs"></tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:32px">
+          <div class="tile-detail-label">What it's made of</div>
+          <div class="ingredient-list">
+            <div><span class="dot"></span><span class="label">Oxide pigment</span></div>
+            <div><span class="dot"></span><span class="label">Local river sand</span></div>
+            <div><span class="dot"></span><span class="label">Portland cement</span></div>
+          </div>
+        </div>
+
+        <button type="button" class="tile-sticky-enquire" id="tileEnquireInline" style="display:none">Enquire about this tile</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="section-tight" style="max-width:var(--container-wide);margin:0 auto;">
+    <div class="container">
+      <h2 style="font-size:var(--text-section)">More from the collection</h2>
+      <div class="tile-grid" id="relatedTiles" style="margin-top:28px"></div>
+    </div>
+  </section>
+
+  <div class="tile-sticky-bar" id="stickyBar">
+    <div>
+      <div class="name" id="stickyName"></div>
+      <div class="spec" id="stickySpec"></div>
+    </div>
+    <button type="button" id="tileEnquire">Enquire about this tile</button>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="assets/images/logo-vertical-white.png" alt="Grham Tiles">
+      <p>Handmade tiles from Kerala, inspired by the Athangudi craft. Bringing tradition to your doorstep.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Explore</div>
+      <a href="tiles.html">Tiles</a>
+      <a href="services.html">Services</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="blog.html">Blog</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Studio</div>
+      <a href="about.html">About</a>
+      <a href="about.html#workshop">The making process</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Reach us</div>
+      <span>+91 00000 00000</span>
+      <span>hello@grhamtiles.in</span>
+      <span>Kerala, India</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Grham Home Decors</span>
+    <span>Handmade in Kerala</span>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  var slug = grhamGetQueryParam('tile') || GRHAM_TILES[0].slug;
+  var tile = grhamFindBySlug(GRHAM_TILES, slug) || GRHAM_TILES[0];
+
+  document.title = tile.name + ' — Grham Tiles';
+  document.getElementById('pageDescription').setAttribute('content', tile.tagline);
+  document.getElementById('tileMedia').style.background = 'var(' + tile.swatch + ')';
+  document.getElementById('tileEyebrow').textContent = 'Cement oxide · ' + tile.spec.split(' · ')[0];
+  document.getElementById('tileName').textContent = tile.name;
+  document.getElementById('tileTagline').textContent = tile.description;
+  document.getElementById('tileColorways').innerHTML = grhamSwatchDotsHTML(tile.swatches, 16);
+  document.getElementById('stickyName').textContent = tile.name;
+  document.getElementById('stickySpec').textContent = tile.spec;
+
+  var gallery = tile.swatches.slice();
+  while (gallery.length < 4) gallery = gallery.concat(tile.swatches);
+  gallery = gallery.slice(0, 4);
+  document.getElementById('tileThumbs').innerHTML = gallery.map(function (c) {
+    return '<div class="thumb" style="background:var(' + c + ')"></div>';
+  }).join('');
+
+  var specs = {
+    'Size': tile.spec.split(' · ')[0] + ' (' + (tile.spec.indexOf('10"') === 0 ? '254 × 254 mm' : '200 × 200 mm') + ')',
+    'Thickness': '18–20 mm',
+    'Finish': 'Hand-polished',
+    'Water absorption': '< 10%'
+  };
+  document.getElementById('tileSpecs').innerHTML = Object.keys(specs).map(function (k) {
+    return '<tr><td>' + k + '</td><td>' + specs[k] + '</td></tr>';
+  }).join('');
+
+  var related = GRHAM_TILES.filter(function (t) { return t.slug !== tile.slug; }).slice(0, 4);
+  document.getElementById('relatedTiles').innerHTML = related.map(grhamTileCardHTML).join('');
+
+  function goEnquire() { window.location.href = 'contact.html?tile=' + encodeURIComponent(tile.name); }
+  document.getElementById('tileEnquire').addEventListener('click', goEnquire);
+  document.getElementById('tileEnquireInline').addEventListener('click', goEnquire);
+
+  function syncStickyVisibility() {
+    var inline = document.getElementById('tileEnquireInline');
+    var wide = window.innerWidth >= 768;
+    inline.style.display = wide ? 'block' : 'none';
+    document.getElementById('stickyBar').style.display = wide ? 'none' : 'flex';
+  }
+  syncStickyVisibility();
+  window.addEventListener('resize', syncStickyVisibility);
+})();
+</script>
+</body>
+</html>
