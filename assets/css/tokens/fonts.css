@@ -1,0 +1,16 @@
+/* Self-hosted brand fonts (Latin subset — covers all homepage copy) */
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../../fonts/playfairdisplay-v40-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('../../fonts/dmsans-v17-regular.woff2') format('woff2');
+}
