@@ -83,13 +83,13 @@ button { font: inherit; }
 }
 .swatch-dots span.light { border: 1px solid var(--border-strong); }
 
-/* ---------- Floating nav ---------- */
+/* ---------- Floating nav (fixed/sticky, used on every page) ---------- */
 .nav-float {
-  position: absolute;
+  position: fixed;
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 30;
+  z-index: 500;
   width: min(280px, calc(100% - 32px));
   background: #fff;
   box-shadow: 0 8px 24px rgba(0, 0, 0, .16);
@@ -100,6 +100,41 @@ button { font: inherit; }
   box-sizing: border-box;
 }
 .nav-float img.logo { height: 28px; width: auto; }
+
+/* Detail pages (tile / portfolio / blog detail) graft a red back-square
+   onto the left edge of the same floating nav, as one fixed unit. */
+.nav-float-wrap {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  display: flex;
+  align-items: stretch;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .16);
+}
+.nav-float-wrap .nav-float {
+  position: static;
+  transform: none;
+  box-shadow: none;
+}
+.nav-back-square {
+  flex: 0 0 auto;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--red);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  transition: background var(--speed) var(--ease);
+}
+.nav-back-square:hover { background: #a11f24; color: #fff; }
+
+/* Space for the fixed nav so first-fold content never sits underneath it.
+   Not needed on the homepage: the hero already reserves that space. */
+.page-top-pad { padding-top: 100px; }
 .nav-links { display: none; align-items: center; gap: 32px; }
 .nav-links a {
   font-family: var(--font-body);
@@ -108,6 +143,7 @@ button { font: inherit; }
   color: var(--ink);
 }
 .nav-links a:hover { color: var(--red); }
+.nav-links a.is-active { color: var(--red); }
 .nav-links a.nav-cta {
   color: #fff;
   background: var(--navy);
@@ -130,11 +166,17 @@ button { font: inherit; }
 @media (min-width: 768px) {
   .nav-float { top: 20px; width: min(560px, calc(100% - 64px)); padding: 12px 22px; }
   .nav-float img.logo { height: 32px; }
+  .nav-float-wrap { top: 20px; }
+  .nav-back-square { width: 52px; font-size: 18px; }
+  .page-top-pad { padding-top: 120px; }
 }
 
 @media (min-width: 1200px) {
   .nav-float { top: 28px; width: 720px; padding: 14px 28px; }
   .nav-float img.logo { height: 38px; }
+  .nav-float-wrap { top: 28px; }
+  .nav-back-square { width: 60px; font-size: 20px; }
+  .page-top-pad { padding-top: 150px; }
   .nav-links { display: flex; }
   .hamburger { display: none; }
 }
@@ -524,70 +566,6 @@ button { font: inherit; }
    Inner-page layout: header variants, page hero, and shared components
    used by about/tiles/tile/services/portfolio/blog/contact/legal pages.
    ===================================================================== */
-
-/* ---------- Plain site header (non-hero pages) ---------- */
-.site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  box-sizing: border-box;
-  border-bottom: 1px solid var(--border);
-  background: var(--ivory);
-}
-.site-header img.logo { height: 28px; width: auto; }
-.site-header .nav-links { display: none; align-items: center; gap: 32px; }
-.site-header .nav-links a {
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--ink);
-}
-.site-header .nav-links a:hover { color: var(--red); }
-.site-header .nav-links a.is-active { color: var(--red); }
-.site-header .nav-links a.nav-cta {
-  color: #fff;
-  background: var(--navy);
-  padding: 10px 22px;
-  box-sizing: border-box;
-}
-.site-header .nav-links a.nav-cta:hover { background: #1a1d3d; color: #fff; }
-
-@media (min-width: 768px) {
-  .site-header { padding: 20px 40px; }
-  .site-header img.logo { height: 32px; }
-}
-
-@media (min-width: 1200px) {
-  .site-header { padding: 24px 64px; }
-  .site-header img.logo { height: 38px; }
-  .site-header .nav-links { display: flex; }
-  .site-header .hamburger { display: none; }
-}
-
-/* ---------- Detail-page nav (tile / portfolio / blog detail) ----------
-   Full site nav, with a red back-button square grafted onto its left edge. */
-.detail-nav-wrap { display: flex; align-items: stretch; }
-.detail-back {
-  flex: 0 0 auto;
-  width: 52px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--red);
-  color: #fff;
-  font-size: 18px;
-  line-height: 1;
-  transition: background var(--speed) var(--ease);
-}
-.detail-back:hover { background: #a11f24; color: #fff; }
-.detail-nav-header { flex: 1; min-width: 0; }
-
-@media (min-width: 768px) {
-  .detail-back { width: 64px; font-size: 20px; }
-}
-
-@media (min-width: 1200px) {
-  .detail-back { width: 72px; font-size: 22px; }
-}
 
 /* ---------- Minimal utility header (thank-you / legal / 404) ---------- */
 .utility-header {
