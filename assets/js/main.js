@@ -1,3 +1,17 @@
+/* Decorative brand tile-pattern strip, appended after the footer (or after
+   .center-page on the utility pages that have no footer) on every page. */
+(function () {
+  var anchor = document.querySelector('.site-footer') || document.querySelector('.center-page');
+  if (!anchor) return;
+  var strip = document.createElement('div');
+  strip.className = 'brand-strip';
+  strip.setAttribute('aria-hidden', 'true');
+  var pattern = document.createElement('div');
+  pattern.className = 'brand-strip-pattern';
+  strip.appendChild(pattern);
+  anchor.insertAdjacentElement('afterend', strip);
+})();
+
 (function () {
   var menu = document.getElementById('mobileMenu');
   var openBtn = document.getElementById('menuOpen');

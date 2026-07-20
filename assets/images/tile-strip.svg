@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
+  <!-- Tile 1: cherry, 4-petal flower -->
+  <rect x="0" y="0" width="100" height="100" fill="#9E3039"/>
+  <g transform="translate(50 50)">
+    <g fill="#F3EEE4">
+      <ellipse cx="0" cy="-18" rx="9" ry="17"/>
+      <ellipse cx="0" cy="-18" rx="9" ry="17" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-18" rx="9" ry="17" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-18" rx="9" ry="17" transform="rotate(270)"/>
+    </g>
+    <circle r="7" fill="#D8A13B"/>
+  </g>
+
+  <!-- Tile 2: emerald, corner triangles + small flower -->
+  <rect x="100" y="0" width="100" height="100" fill="#2E5E4E"/>
+  <polygon points="100,0 140,0 100,40" fill="#D8A13B"/>
+  <polygon points="200,0 160,0 200,40" fill="#C1272D"/>
+  <polygon points="100,100 140,100 100,60" fill="#C1272D"/>
+  <polygon points="200,100 160,100 200,60" fill="#D8A13B"/>
+  <g transform="translate(150 50)">
+    <g fill="#D8A13B">
+      <ellipse cx="0" cy="-14" rx="7" ry="13"/>
+      <ellipse cx="0" cy="-14" rx="7" ry="13" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-14" rx="7" ry="13" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-14" rx="7" ry="13" transform="rotate(270)"/>
+    </g>
+    <circle r="6" fill="#C1272D"/>
+  </g>
+
+  <!-- Tile 3: red mandala -->
+  <rect x="200" y="0" width="100" height="100" fill="#C1272D"/>
+  <circle cx="250" cy="50" r="34" fill="none" stroke="#F3EEE4" stroke-width="3" stroke-dasharray="4 5"/>
+  <circle cx="250" cy="50" r="26" fill="none" stroke="#56618F" stroke-width="5"/>
+  <circle cx="250" cy="50" r="18" fill="#9E3039"/>
+  <g transform="translate(250 50)" fill="#F3EEE4">
+    <ellipse cx="0" cy="-9" rx="4.5" ry="8.5"/>
+    <ellipse cx="0" cy="-9" rx="4.5" ry="8.5" transform="rotate(90)"/>
+    <ellipse cx="0" cy="-9" rx="4.5" ry="8.5" transform="rotate(180)"/>
+    <ellipse cx="0" cy="-9" rx="4.5" ry="8.5" transform="rotate(270)"/>
+    <circle r="4" fill="#D8A13B"/>
+  </g>
+
+  <!-- Tile 4: teal, minimal star -->
+  <rect x="300" y="0" width="100" height="100" fill="#2A6B63"/>
+  <g transform="translate(350 50)" fill="#F3EEE4">
+    <polygon points="0,-20 5,-5 20,0 5,5 0,20 -5,5 -20,0 -5,-5"/>
+  </g>
+</svg>

@@ -1065,6 +1065,26 @@ button { font: inherit; }
   .mark-icon-desktop { display: block; }
 }
 
+/* ---------- Brand pattern strip (after the footer, every page) ---------- */
+.brand-strip {
+  width: 100%;
+  height: 84px;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.brand-strip-pattern {
+  width: 100%;
+  height: 60px;
+  background: url("../images/tile-strip.svg") repeat-x center / auto 100%;
+}
+@media (min-width: 768px) {
+  .brand-strip { height: 100px; }
+  .brand-strip-pattern { height: 72px; }
+}
+
 /* ---------- Scroll-triggered reveal (restrained fade + rise) ---------- */
 .reveal {
   opacity: 0;
