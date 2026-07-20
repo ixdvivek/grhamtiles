@@ -29,3 +29,27 @@
     if (e.key === 'Escape' && menu.classList.contains('is-open')) closeMenu();
   });
 })();
+
+/* Subtle parallax on the Craft section's background motif, if present. */
+(function () {
+  var motif = document.querySelector('.craft-motif');
+  if (!motif) return;
+
+  var ticking = false;
+
+  function update() {
+    var rect = motif.parentElement.getBoundingClientRect();
+    var offset = (window.innerHeight - rect.top) * 0.06;
+    motif.style.transform = 'translate(-50%, calc(-50% + ' + offset + 'px))';
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  update();
+})();

@@ -10,13 +10,23 @@
 </head>
 <body>
 
-<header class="site-header">
-  <a href="portfolio.html" class="back-link">← All projects</a>
-  <img class="mark-icon-desktop" src="assets/images/mark.png" alt="" style="height:16px">
-  <button type="button" class="hamburger" id="menuOpen" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
-    <span></span><span></span>
-  </button>
-</header>
+<div class="detail-nav-wrap">
+  <a href="portfolio.html" class="detail-back" aria-label="Back to portfolio">←</a>
+  <header class="site-header detail-nav-header">
+    <a href="index.html" aria-label="Grham Tiles home"><img class="logo" src="assets/images/logo-horizontal.png" alt="Grham Tiles"></a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="tiles.html">Tiles</a>
+      <a href="services.html">Services</a>
+      <a href="portfolio.html" class="is-active">Portfolio</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html" class="nav-cta">Contact</a>
+    </div>
+    <button type="button" class="hamburger" id="menuOpen" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+</div>
 
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-head">
@@ -46,13 +56,8 @@
 </div>
 
 <main>
-  <div class="pd-grid" style="margin-top:20px">
-    <div>
-      <div class="pd-media" id="pdMedia">
-        <span>Site photo — full view, coming soon</span>
-      </div>
-      <div class="pd-thumbs" id="pdThumbs"></div>
-    </div>
+  <div class="pd-grid">
+    <div class="pd-stack" id="pdStack"></div>
     <div class="pd-side">
       <div class="pd-body">
         <div class="location" id="pdLocation"></div>
@@ -102,6 +107,7 @@
 
 <script src="assets/js/data.js"></script>
 <script src="assets/js/site.js"></script>
+<script src="assets/js/lightbox.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
 (function () {
@@ -110,16 +116,29 @@
 
   document.title = project.project + ' — Grham Tiles';
   document.getElementById('pageDescription').setAttribute('content', project.description);
-  document.getElementById('pdMedia').style.background = 'var(' + project.swatch + ')';
   document.getElementById('pdLocation').textContent = project.location;
   document.getElementById('pdTitle').textContent = project.project;
   document.getElementById('pdDescription').textContent = project.description;
 
-  var thumbSwatches = ['--oxide-mustard', '--oxide-coffee', '--oxide-periwinkle', '--oxide-emerald']
-    .filter(function (s) { return s !== project.swatch; }).slice(0, 3);
-  document.getElementById('pdThumbs').innerHTML = thumbSwatches.map(function (c) {
-    return '<div class="thumb" style="background:var(' + c + ')"></div>';
+  /* Every image in the project is listed full-size, stacked — no thumbnail
+     strip. Aspect ratios vary on purpose (site photos come in whatever
+     shape they were shot in); each is click-to-zoom via the shared lightbox. */
+  var otherSwatches = ['--oxide-mustard', '--oxide-coffee', '--oxide-periwinkle', '--oxide-emerald', '--oxide-thara']
+    .filter(function (s) { return s !== project.swatch; });
+  var images = [project.swatch].concat(otherSwatches.slice(0, 3));
+  var ratios = ['3/2', '4/5', '1/1', '16/9'];
+  var labels = ['Site photo — full view, coming soon', null, null, null];
+
+  var stack = document.getElementById('pdStack');
+  stack.innerHTML = images.map(function (swatch, i) {
+    var label = labels[i] ? '<span>' + labels[i] + '</span>' : '';
+    return '<div class="pd-stack-img" style="aspect-ratio:' + ratios[i % ratios.length] + ';background:var(' + swatch + ')" data-i="' + i + '">' + label + '</div>';
   }).join('');
+  stack.querySelectorAll('.pd-stack-img').forEach(function (el) {
+    el.addEventListener('click', function () {
+      grhamOpenLightbox(images, parseInt(el.getAttribute('data-i'), 10));
+    });
+  });
 
   document.getElementById('pdTiles').innerHTML = project.tiles.map(function (name) {
     var s = grhamSlugForName(name);

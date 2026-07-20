@@ -11,11 +11,18 @@
 </head>
 <body>
 
-<div class="detail-header-wrap">
-  <div class="detail-header-fade"></div>
-  <header class="detail-header">
-    <a href="tiles.html" class="back-link">← Tiles</a>
-    <img class="mark-icon-desktop" src="assets/images/mark-white.png" alt="" style="height:20px">
+<div class="detail-nav-wrap">
+  <a href="tiles.html" class="detail-back" aria-label="Back to tiles">←</a>
+  <header class="site-header detail-nav-header">
+    <a href="index.html" aria-label="Grham Tiles home"><img class="logo" src="assets/images/logo-horizontal.png" alt="Grham Tiles"></a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="tiles.html" class="is-active">Tiles</a>
+      <a href="services.html">Services</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html" class="nav-cta">Contact</a>
+    </div>
     <button type="button" class="hamburger" id="menuOpen" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
       <span></span><span></span>
     </button>
@@ -52,10 +59,13 @@
 <main>
   <div class="tile-detail-grid">
     <div>
-      <div class="tile-detail-media" id="tileMedia">
-        <span>Tile photo — full view, coming soon</span>
+      <div class="tile-slider" id="tileSlider">
+        <div class="tile-slider-track" id="tileSliderTrack"></div>
+        <button type="button" class="slider-arrow slider-prev" aria-label="Previous image">‹</button>
+        <button type="button" class="slider-arrow slider-next" aria-label="Next image">›</button>
+        <button type="button" class="slider-zoom" aria-label="Zoom image">⤢</button>
+        <div class="slider-dots" id="tileSliderDots"></div>
       </div>
-      <div class="tile-detail-thumbs" id="tileThumbs"></div>
     </div>
     <div class="tile-detail-side">
       <div class="tile-detail-body">
@@ -65,11 +75,6 @@
         </div>
         <h1 id="tileName"></h1>
         <p class="intro" id="tileTagline"></p>
-
-        <div style="margin-top:24px">
-          <div class="tile-detail-label">Available colorways</div>
-          <div class="swatch-dots" id="tileColorways" style="gap:8px"></div>
-        </div>
 
         <div style="margin-top:32px">
           <table class="specs-table">
@@ -83,6 +88,7 @@
             <div><span class="dot"></span><span class="label">Oxide pigment</span></div>
             <div><span class="dot"></span><span class="label">Local river sand</span></div>
             <div><span class="dot"></span><span class="label">Portland cement</span></div>
+            <div><span class="dot"></span><span class="label">Master craftsmanship</span></div>
           </div>
         </div>
 
@@ -141,6 +147,7 @@
 
 <script src="assets/js/data.js"></script>
 <script src="assets/js/site.js"></script>
+<script src="assets/js/lightbox.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
 (function () {
@@ -149,26 +156,15 @@
 
   document.title = tile.name + ' — Grham Tiles';
   document.getElementById('pageDescription').setAttribute('content', tile.tagline);
-  document.getElementById('tileMedia').style.background = 'var(' + tile.swatch + ')';
   document.getElementById('tileEyebrow').textContent = 'Cement oxide · ' + tile.spec.split(' · ')[0];
   document.getElementById('tileName').textContent = tile.name;
   document.getElementById('tileTagline').textContent = tile.description;
-  document.getElementById('tileColorways').innerHTML = grhamSwatchDotsHTML(tile.swatches, 16);
   document.getElementById('stickyName').textContent = tile.name;
   document.getElementById('stickySpec').textContent = tile.spec;
 
-  var gallery = tile.swatches.slice();
-  while (gallery.length < 4) gallery = gallery.concat(tile.swatches);
-  gallery = gallery.slice(0, 4);
-  document.getElementById('tileThumbs').innerHTML = gallery.map(function (c) {
-    return '<div class="thumb" style="background:var(' + c + ')"></div>';
-  }).join('');
-
   var specs = {
     'Size': tile.spec.split(' · ')[0] + ' (' + (tile.spec.indexOf('10"') === 0 ? '254 × 254 mm' : '200 × 200 mm') + ')',
-    'Thickness': '18–20 mm',
-    'Finish': 'Hand-polished',
-    'Water absorption': '< 10%'
+    'Thickness': '18–20 mm'
   };
   document.getElementById('tileSpecs').innerHTML = Object.keys(specs).map(function (k) {
     return '<tr><td>' + k + '</td><td>' + specs[k] + '</td></tr>';
@@ -189,6 +185,56 @@
   }
   syncStickyVisibility();
   window.addEventListener('resize', syncStickyVisibility);
+
+  /* Image slider — colorway swatches double as gallery slides for now;
+     a future video slide just needs a { type: 'video', src } entry and a
+     branch in renderSlides() below (lightbox.js already treats slides as
+     opaque per-index data, so it needs no change). */
+  var slides = tile.swatches.slice();
+  while (slides.length < 3) slides = slides.concat(tile.swatches);
+  slides = slides.slice(0, 4);
+
+  var track = document.getElementById('tileSliderTrack');
+  var dotsWrap = document.getElementById('tileSliderDots');
+  var sliderIndex = 0;
+
+  function renderSlides() {
+    track.innerHTML = slides.map(function (s, i) {
+      var label = i === 0 ? '<span class="slide-label">Photo coming soon</span>' : '';
+      return '<div class="tile-slider-slide" style="background:var(' + s + ')">' + label + '</div>';
+    }).join('');
+    dotsWrap.innerHTML = slides.map(function (_, i) {
+      return '<button type="button" class="slider-dot' + (i === 0 ? ' is-active' : '') + '" data-i="' + i + '" aria-label="Go to image ' + (i + 1) + '"></button>';
+    }).join('');
+    dotsWrap.querySelectorAll('.slider-dot').forEach(function (dot) {
+      dot.addEventListener('click', function () { goToSlide(parseInt(dot.getAttribute('data-i'), 10)); });
+    });
+  }
+
+  function goToSlide(i) {
+    sliderIndex = (i + slides.length) % slides.length;
+    track.style.transform = 'translateX(-' + (sliderIndex * 100) + '%)';
+    dotsWrap.querySelectorAll('.slider-dot').forEach(function (dot, di) {
+      dot.classList.toggle('is-active', di === sliderIndex);
+    });
+  }
+
+  renderSlides();
+
+  document.querySelector('#tileSlider .slider-prev').addEventListener('click', function () { goToSlide(sliderIndex - 1); });
+  document.querySelector('#tileSlider .slider-next').addEventListener('click', function () { goToSlide(sliderIndex + 1); });
+  document.querySelector('#tileSlider .slider-zoom').addEventListener('click', function () { grhamOpenLightbox(slides, sliderIndex); });
+
+  var sliderEl = document.getElementById('tileSlider');
+  var touchStartX = null;
+  sliderEl.addEventListener('touchstart', function (e) { touchStartX = e.touches[0].clientX; }, { passive: true });
+  sliderEl.addEventListener('touchend', function (e) {
+    if (touchStartX === null) return;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if (dx > 40) goToSlide(sliderIndex - 1);
+    else if (dx < -40) goToSlide(sliderIndex + 1);
+    touchStartX = null;
+  });
 })();
 </script>
 </body>
