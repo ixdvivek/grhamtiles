@@ -16,6 +16,9 @@ button { font: inherit; }
   outline-offset: 2px;
 }
 
+::selection { background: var(--red); color: #fff; }
+::-moz-selection { background: var(--red); color: #fff; }
+
 .container {
   max-width: var(--container);
   margin: 0 auto;
@@ -1060,4 +1063,74 @@ button { font: inherit; }
 .mark-icon-desktop { display: none; }
 @media (min-width: 1200px) {
   .mark-icon-desktop { display: block; }
+}
+
+/* ---------- Scroll-triggered reveal (restrained fade + rise) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+.reveal.is-revealed { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- Nav back-square: entrance peek-in + hover peek-out/in ---------- */
+.nav-float-wrap .nav-back-square {
+  animation: nav-back-peek-in .5s var(--ease) .15s both;
+  overflow: hidden;
+}
+.nav-back-arrow { display: inline-block; transition: transform .3s var(--ease); }
+.nav-back-square:hover .nav-back-arrow,
+.nav-back-square:focus-visible .nav-back-arrow {
+  animation: nav-back-peek-hover .6s var(--ease);
+}
+
+@keyframes nav-back-peek-in {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes nav-back-peek-hover {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(-4px); }
+  70%  { transform: translateX(1px); }
+  100% { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-float-wrap .nav-back-square { animation: none; }
+  .nav-back-square:hover .nav-back-arrow,
+  .nav-back-square:focus-visible .nav-back-arrow { animation: none; }
+}
+
+/* ---------- Page load / navigation transition (brand mark) ---------- */
+html.grham-loading body { visibility: hidden; }
+
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s var(--ease);
+}
+.page-transition.is-visible { opacity: 1; pointer-events: all; }
+.page-transition-mark {
+  width: 48px;
+  height: 48px;
+  opacity: 0;
+  transform: scale(.82);
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+}
+.page-transition.is-visible .page-transition-mark { opacity: 1; transform: scale(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition,
+  .page-transition-mark { transition: none; }
 }
