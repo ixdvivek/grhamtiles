@@ -1,0 +1,29 @@
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-section: clamp(64px, 9vw, 120px);
+  --space-gutter: clamp(20px, 4vw, 48px);
+
+  --container: 1200px;
+  --container-wide: 1400px;
+
+  /* Corners: the product is a square tile — surfaces stay sharp */
+  --radius-0: 0;
+  --radius-btn: 2px;
+  --radius-pill: 999px;
+  --border-w: 1px;
+
+  /* Shadows: essentially none. One soft elevation for sticky bars/dialogs only */
+  --shadow-sticky: 0 -1px 0 var(--border), 0 -8px 24px rgba(28, 26, 23, .06);
+  --shadow-pop: 0 12px 40px rgba(28, 26, 23, .14);
+
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --speed: .2s;
+}
