@@ -120,7 +120,7 @@
 <script src="assets/js/site.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
-(function () {
+grhamDataReady.then(function () {
   var slug = grhamGetQueryParam('post') || GRHAM_POSTS[0].slug;
   var post = grhamFindBySlug(GRHAM_POSTS, slug) || GRHAM_POSTS[0];
 
@@ -128,7 +128,7 @@
   document.getElementById('pageDescription').setAttribute('content', post.excerpt);
   document.getElementById('articleTitle').textContent = post.title;
   document.getElementById('articleDate').textContent = post.date;
-  document.getElementById('articleMedia').style.background = 'var(' + post.swatch + ')';
+  document.getElementById('articleMedia').setAttribute('style', grhamMediaStyle(post.swatch, post.image));
   document.getElementById('articleBody').innerHTML = post.body.map(function (p) {
     return '<p>' + p + '</p>';
   }).join('');
@@ -137,7 +137,7 @@
   document.getElementById('articleRelated').innerHTML = related.map(function (r) {
     return '' +
       '<a href="blog-article.html?post=' + r.slug + '">' +
-        '<div class="article-related-thumb" style="background:var(' + r.swatch + ')"></div>' +
+        '<div class="article-related-thumb" style="' + grhamMediaStyle(r.swatch, r.image) + '"></div>' +
         '<div>' +
           '<div class="article-related-title">' + r.title + '</div>' +
           '<div class="article-related-date">' + r.date + '</div>' +
@@ -160,7 +160,7 @@
       });
     }
   });
-})();
+});
 </script>
 </body>
 </html>

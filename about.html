@@ -172,9 +172,11 @@
 <script src="assets/js/site.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
+grhamDataReady.then(function () {
   document.getElementById('aboutProjects').innerHTML = GRHAM_PROJECTS.slice(0, 3).map(function (p) {
     return grhamPortfolioCardHTML(p);
   }).join('');
+});
 </script>
 </body>
 </html>

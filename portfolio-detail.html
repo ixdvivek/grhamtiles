@@ -111,7 +111,7 @@
 <script src="assets/js/lightbox.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
-(function () {
+grhamDataReady.then(function () {
   var slug = grhamGetQueryParam('project') || GRHAM_PROJECTS[0].slug;
   var project = grhamFindBySlug(GRHAM_PROJECTS, slug) || GRHAM_PROJECTS[0];
 
@@ -122,18 +122,33 @@
   document.getElementById('pdDescription').textContent = project.description;
 
   /* Every image in the project is listed full-size, stacked — no thumbnail
-     strip. Aspect ratios vary on purpose (site photos come in whatever
-     shape they were shot in); each is click-to-zoom via the shared lightbox. */
-  var otherSwatches = ['--oxide-mustard', '--oxide-coffee', '--oxide-periwinkle', '--oxide-emerald', '--oxide-thara']
-    .filter(function (s) { return s !== project.swatch; });
-  var images = [project.swatch].concat(otherSwatches.slice(0, 3));
-  var ratios = ['3/2', '4/5', '1/1', '16/9'];
-  var labels = ['Site photo — full view, coming soon', null, null, null];
+     strip; each is click-to-zoom via the shared lightbox. Real photos
+     (image + gallery, from Sanity) win when present. Otherwise, fall back
+     to color swatches with varied aspect ratios (site photos come in
+     whatever shape they were shot in, so the placeholder varies too). */
+  var realPhotos = (project.image ? [project.image] : []).concat(project.gallery || []);
+  var usingRealPhotos = realPhotos.length > 0;
+
+  var images, ratios, labels;
+  if (usingRealPhotos) {
+    images = realPhotos;
+    ratios = images.map(function () { return '4/5'; });
+    labels = images.map(function () { return null; });
+  } else {
+    var otherSwatches = ['--oxide-mustard', '--oxide-coffee', '--oxide-periwinkle', '--oxide-emerald', '--oxide-thara']
+      .filter(function (s) { return s !== project.swatch; });
+    images = [project.swatch].concat(otherSwatches.slice(0, 3));
+    ratios = ['3/2', '4/5', '1/1', '16/9'];
+    labels = ['Site photo — full view, coming soon', null, null, null];
+  }
 
   var stack = document.getElementById('pdStack');
-  stack.innerHTML = images.map(function (swatch, i) {
+  stack.innerHTML = images.map(function (img, i) {
     var label = labels[i] ? '<span>' + labels[i] + '</span>' : '';
-    return '<div class="pd-stack-img" style="aspect-ratio:' + ratios[i % ratios.length] + ';background:var(' + swatch + ')" data-i="' + i + '">' + label + '</div>';
+    var style = usingRealPhotos
+      ? "aspect-ratio:" + ratios[i % ratios.length] + ";background-image:url('" + img + "');background-size:cover;background-position:center"
+      : 'aspect-ratio:' + ratios[i % ratios.length] + ';background:var(' + img + ')';
+    return '<div class="pd-stack-img" style="' + style + '" data-i="' + i + '">' + label + '</div>';
   }).join('');
   stack.querySelectorAll('.pd-stack-img').forEach(function (el) {
     el.addEventListener('click', function () {
@@ -152,7 +167,7 @@
   document.getElementById('pdEnquire').addEventListener('click', function () {
     window.location.href = 'contact.html?project=' + encodeURIComponent(project.project);
   });
-})();
+});
 </script>
 </body>
 </html>

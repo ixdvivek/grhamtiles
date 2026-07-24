@@ -151,7 +151,7 @@
 <script src="assets/js/lightbox.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
-(function () {
+grhamDataReady.then(function () {
   var slug = grhamGetQueryParam('tile') || GRHAM_TILES[0].slug;
   var tile = grhamFindBySlug(GRHAM_TILES, slug) || GRHAM_TILES[0];
 
@@ -187,13 +187,19 @@
   syncStickyVisibility();
   window.addEventListener('resize', syncStickyVisibility);
 
-  /* Image slider — colorway swatches double as gallery slides for now;
-     a future video slide just needs a { type: 'video', src } entry and a
-     branch in renderSlides() below (lightbox.js already treats slides as
-     opaque per-index data, so it needs no change). */
-  var slides = tile.swatches.slice();
-  while (slides.length < 3) slides = slides.concat(tile.swatches);
-  slides = slides.slice(0, 4);
+  /* Real photos (image + gallery, from Sanity) win when present; otherwise
+     colorway swatches double as gallery slides. A future video slide just
+     needs a { type: 'video', src } entry and a branch in renderSlides()
+     below (lightbox.js already treats slides as opaque per-index data, so
+     it needs no change there). */
+  var realPhotos = (tile.image ? [tile.image] : []).concat(tile.gallery || []);
+  var usingRealPhotos = realPhotos.length > 0;
+  var slides = realPhotos;
+  if (!usingRealPhotos) {
+    slides = tile.swatches.slice();
+    while (slides.length < 3) slides = slides.concat(tile.swatches);
+    slides = slides.slice(0, 4);
+  }
 
   var track = document.getElementById('tileSliderTrack');
   var dotsWrap = document.getElementById('tileSliderDots');
@@ -201,8 +207,11 @@
 
   function renderSlides() {
     track.innerHTML = slides.map(function (s, i) {
-      var label = i === 0 ? '<span class="slide-label">Photo coming soon</span>' : '';
-      return '<div class="tile-slider-slide" style="background:var(' + s + ')">' + label + '</div>';
+      var label = (!usingRealPhotos && i === 0) ? '<span class="slide-label">Photo coming soon</span>' : '';
+      var style = usingRealPhotos
+        ? "background-image:url('" + s + "');background-size:cover;background-position:center"
+        : 'background:var(' + s + ')';
+      return '<div class="tile-slider-slide" style="' + style + '">' + label + '</div>';
     }).join('');
     dotsWrap.innerHTML = slides.map(function (_, i) {
       return '<button type="button" class="slider-dot' + (i === 0 ? ' is-active' : '') + '" data-i="' + i + '" aria-label="Go to image ' + (i + 1) + '"></button>';
@@ -236,7 +245,7 @@
     else if (dx < -40) goToSlide(sliderIndex + 1);
     touchStartX = null;
   });
-})();
+});
 </script>
 </body>
 </html>

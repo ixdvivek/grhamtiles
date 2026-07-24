@@ -1,6 +1,20 @@
 /* Shared content catalog used by tiles.html, tile.html, portfolio.html,
-   portfolio-detail.html, blog.html and blog-article.html. */
+   portfolio-detail.html, blog.html and blog-article.html.
+
+   Backed by Sanity (studio/), fetched read-only from its CDN API below.
+   The arrays defined inline here are the fallback catalog: they render
+   immediately so the site never has a blank first paint, and they're
+   what stays live if the fetch fails, times out, or the dataset is still
+   empty. Real content entered in the Studio transparently replaces them
+   once it loads — nothing else on any page needs to change to benefit,
+   since every page already just reads GRHAM_TILES / GRHAM_PROJECTS /
+   GRHAM_POSTS after awaiting grhamDataReady. */
 (function (global) {
+  var SANITY_PROJECT_ID = '6rmlud2u';
+  var SANITY_DATASET = 'production';
+  var SANITY_API_VERSION = '2024-01-01';
+  var SANITY_FETCH_TIMEOUT_MS = 2500;
+
   var TILES = [
     {
       slug: 'kolam',
@@ -233,4 +247,73 @@
   global.grhamSlugForName = function (name) {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   };
+
+  function formatPostDate(value) {
+    // Sanity's `date` field comes back as "YYYY-MM-DD"; the fallback
+    // catalog above already uses the site's display format ("July 2,
+    // 2026") directly, so only reformat values that look like ISO dates.
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return value;
+    var parsed = new Date(value + 'T00:00:00');
+    if (isNaN(parsed.getTime())) return value;
+    return parsed.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  }
+
+  var GROQ_QUERY =
+    '{' +
+      '"tiles": *[_type == "tile"] | order(name asc){' +
+        '"slug": slug.current, name, category, categoryLabel, spec, thickness, tagline, description, swatch, swatches, ' +
+        '"image": image.asset->url, "gallery": gallery[].asset->url' +
+      '},' +
+      '"projects": *[_type == "project"] | order(project asc){' +
+        '"slug": slug.current, project, location, tiles, description, swatch, ' +
+        '"image": image.asset->url, "gallery": gallery[].asset->url' +
+      '},' +
+      '"posts": *[_type == "post"] | order(date desc){' +
+        '"slug": slug.current, title, date, excerpt, body, swatch, "image": image.asset->url' +
+      '}' +
+    '}';
+
+  var queryUrl =
+    'https://' + SANITY_PROJECT_ID + '.apicdn.sanity.io/v' + SANITY_API_VERSION +
+    '/data/query/' + SANITY_DATASET + '?query=' + encodeURIComponent(GROQ_QUERY);
+
+  function fetchFromSanity() {
+    return fetch(queryUrl)
+      .then(function (res) {
+        if (!res.ok) throw new Error('Sanity responded ' + res.status);
+        return res.json();
+      })
+      .then(function (json) {
+        var result = json && json.result;
+        if (!result) return;
+        if (Array.isArray(result.tiles) && result.tiles.length) {
+          global.GRHAM_TILES = result.tiles;
+        }
+        if (Array.isArray(result.projects) && result.projects.length) {
+          global.GRHAM_PROJECTS = result.projects;
+        }
+        if (Array.isArray(result.posts) && result.posts.length) {
+          global.GRHAM_POSTS = result.posts.map(function (post) {
+            return Object.assign({}, post, { date: formatPostDate(post.date) });
+          });
+        }
+      })
+      .catch(function (err) {
+        // Sanity unreachable, CORS-blocked, or the dataset is still
+        // empty — the fallback catalog above is already live, so the
+        // site keeps working exactly as it did before this integration.
+        console.warn('Grham: using built-in fallback catalog —', err.message);
+      });
+  }
+
+  var timeoutGuard = new Promise(function (resolve) {
+    setTimeout(resolve, SANITY_FETCH_TIMEOUT_MS);
+  });
+
+  // Whichever finishes first wins: a slow/unreachable network still lets
+  // the page render (with the fallback data already in place) within
+  // SANITY_FETCH_TIMEOUT_MS rather than blocking indefinitely. The real
+  // fetch keeps running in the background and still applies its result
+  // if it resolves after the guard fires.
+  global.grhamDataReady = Promise.race([fetchFromSanity(), timeoutGuard]);
 })(window);

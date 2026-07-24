@@ -102,7 +102,7 @@
 <script src="assets/js/site.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
-(function () {
+grhamDataReady.then(function () {
   var FILTERS = [
     { key: 'all', label: 'All tiles' },
     { key: 'flooring', label: 'Flooring' },
@@ -133,7 +133,7 @@
   }
 
   render();
-})();
+});
 </script>
 </body>
 </html>

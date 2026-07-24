@@ -99,7 +99,9 @@
 <script src="assets/js/site.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
+grhamDataReady.then(function () {
   document.getElementById('blogGrid').innerHTML = GRHAM_POSTS.map(grhamBlogCardHTML).join('');
+});
 </script>
 </body>
 </html>

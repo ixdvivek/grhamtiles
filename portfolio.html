@@ -99,9 +99,11 @@
 <script src="assets/js/site.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
+grhamDataReady.then(function () {
   document.getElementById('portfolioGrid').innerHTML = GRHAM_PROJECTS.map(function (p) {
     return grhamPortfolioCardHTML(p);
   }).join('');
+});
 </script>
 </body>
 </html>

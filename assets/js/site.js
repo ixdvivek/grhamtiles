@@ -13,10 +13,20 @@
     }).join('');
   }
 
+  /* Real Sanity photos win when present; otherwise fall back to the flat
+     oxide-swatch color placeholder used everywhere real photography is
+     still pending. */
+  function mediaStyle(swatch, imageUrl) {
+    return imageUrl
+      ? "background-image:url('" + imageUrl + "');background-size:cover;background-position:center"
+      : 'background:var(' + swatch + ')';
+  }
+
   function tileCardHTML(tile) {
+    var comingSoon = tile.image ? '' : '<span>Photo coming soon</span>';
     return '' +
       '<a href="tile.html?tile=' + tile.slug + '" class="tile-card">' +
-        '<div class="tile-image" style="background:var(' + tile.swatch + ')"><span>Photo coming soon</span></div>' +
+        '<div class="tile-image" style="' + mediaStyle(tile.swatch, tile.image) + '">' + comingSoon + '</div>' +
         '<span class="tile-name">' + tile.name + '</span>' +
         '<span class="eyebrow">' + tile.spec + '</span>' +
         '<div class="swatch-dots">' + swatchDotsHTML(tile.swatches) + '</div>' +
@@ -31,7 +41,7 @@
     }).join('');
     return '' +
       '<a href="portfolio-detail.html?project=' + project.slug + '" class="portfolio-card">' +
-        '<div class="portfolio-image" style="background:var(' + project.swatch + ')"></div>' +
+        '<div class="portfolio-image" style="' + mediaStyle(project.swatch, project.image) + '"></div>' +
         '<div class="portfolio-body">' +
           '<span class="portfolio-title">' + project.project + '</span>' +
           '<span class="portfolio-location">' + project.location + '</span>' +
@@ -43,7 +53,7 @@
   function blogCardHTML(post) {
     return '' +
       '<a href="blog-article.html?post=' + post.slug + '" class="blog-card">' +
-        '<div class="blog-card-media" style="background:var(' + post.swatch + ')"></div>' +
+        '<div class="blog-card-media" style="' + mediaStyle(post.swatch, post.image) + '"></div>' +
         '<div class="blog-date">' + post.date + '</div>' +
         '<h2>' + post.title + '</h2>' +
         '<p>' + post.excerpt + '</p>' +
@@ -55,6 +65,7 @@
   }
 
   global.grhamIsLightSwatch = isLightSwatch;
+  global.grhamMediaStyle = mediaStyle;
   global.grhamSwatchDotsHTML = swatchDotsHTML;
   global.grhamTileCardHTML = tileCardHTML;
   global.grhamPortfolioCardHTML = portfolioCardHTML;

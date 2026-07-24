@@ -1,8 +1,10 @@
 /*
  * Shared zoom lightbox for tile-detail slides and portfolio-detail images.
- * Slides are plain oxide swatch tokens today (e.g. "--oxide-cherry"); the
- * shape leaves room to add a video slide later — e.g. { type: 'video', src }
- * — by branching on typeof slide in renderSlide() instead of assuming a string.
+ * A slide is either an oxide swatch token (e.g. "--oxide-cherry", the
+ * placeholder used before real photography is uploaded) or a real image
+ * URL from Sanity — renderSlide() below tells them apart by the "--"
+ * prefix. The shape leaves room to add a video slide later — e.g.
+ * { type: 'video', src } — by branching on typeof slide instead.
  */
 (function (global) {
   var lb, prevBtn, nextBtn, contentEl;
@@ -10,7 +12,16 @@
   var index = 0;
 
   function renderSlide() {
-    contentEl.style.background = 'var(' + slides[index] + ')';
+    var slide = slides[index];
+    if (typeof slide === 'string' && slide.indexOf('--') === 0) {
+      contentEl.style.backgroundImage = '';
+      contentEl.style.background = 'var(' + slide + ')';
+    } else {
+      contentEl.style.background = '';
+      contentEl.style.backgroundImage = "url('" + slide + "')";
+      contentEl.style.backgroundSize = 'cover';
+      contentEl.style.backgroundPosition = 'center';
+    }
     var multi = slides.length > 1;
     prevBtn.style.display = multi ? 'flex' : 'none';
     nextBtn.style.display = multi ? 'flex' : 'none';
