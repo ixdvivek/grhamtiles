@@ -89,6 +89,18 @@
       swatches: ['--ivory', '--oxide-thara'],
       tagline: 'A pale trellis in ivory and thara green, handmade in Athangudi.',
       description: 'A quieter pattern for rooms that want texture without contrast — a fine trellis line in thara green, set into an ivory field.'
+    },
+    {
+      slug: 'agni',
+      name: 'Agni',
+      category: 'flooring',
+      categoryLabel: 'Statement pattern',
+      spec: '10" × 10" · Cement oxide',
+      thickness: '19 mm',
+      swatch: '--oxide-cherry',
+      swatches: ['--oxide-cherry', '--ink', '--oxide-mustard'],
+      tagline: 'A fiery statement pattern in cherry and mustard on black, handmade in Athangudi.',
+      description: 'Fiery terracotta-red and burnt-orange tones dominate this design, sharply outlined in black. Named for agni (fire), it brings warmth and drama underfoot — a striking choice for entryways and courtyards.'
     }
   ];
 

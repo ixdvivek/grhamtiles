@@ -165,7 +165,7 @@
 
   var specs = {
     'Size': tile.spec.split(' · ')[0] + ' (' + (tile.spec.indexOf('10"') === 0 ? '254 × 254 mm' : '200 × 200 mm') + ')',
-    'Thickness': '18–20 mm'
+    'Thickness': tile.thickness || '18–20 mm'
   };
   document.getElementById('tileSpecs').innerHTML = Object.keys(specs).map(function (k) {
     return '<tr><td>' + k + '</td><td>' + specs[k] + '</td></tr>';
