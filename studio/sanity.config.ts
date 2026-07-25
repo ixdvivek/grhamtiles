@@ -9,8 +9,11 @@ export default defineConfig({
   name: 'default',
   title: 'Grham Tiles',
 
-  projectId: '6rmlud2u',
-  dataset: 'production',
+  // Read from studio/.env.local (SANITY_STUDIO_* is the prefix Sanity's
+  // Vite build inlines into the Studio bundle) with these values as the
+  // fallback so the Studio still works if that file is ever missing.
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID || '6rmlud2u',
+  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
 
   plugins: [
     structureTool({
