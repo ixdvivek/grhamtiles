@@ -1128,6 +1128,11 @@ button { font: inherit; }
 .soon-body.is-launched .soon-pre,
 .soon-body.is-launched .soon-lede { display: none; }
 
+/* .btn is inline-block; the WhatsApp CTA carries a glyph, so it needs
+   flex alignment without changing buttons elsewhere on the site. */
+.soon-whatsapp { display: inline-flex; align-items: center; gap: 9px; }
+.soon-whatsapp svg { flex: 0 0 auto; }
+
 @media (min-width: 768px) {
   .soon-page { min-height: calc(100vh - 100px); }
   .soon-logo { height: 48px; margin-bottom: 40px; }
