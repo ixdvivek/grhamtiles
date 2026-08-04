@@ -17,12 +17,9 @@
       <img class="soon-logo" src="assets/images/logo-horizontal.png" alt="Grham Tiles">
     </a>
 
-    <span class="eyebrow soon-eyebrow">Launching 17 August 2026</span>
-    <h1>Setting soon.</h1>
-    <p class="soon-lede">
-      Every Grham tile spends eight days hardening in water before it is fit
-      to walk on. The website is taking marginally longer.
-    </p>
+    <span class="eyebrow soon-eyebrow" id="soonEyebrow"></span>
+    <h1 id="soonHeading">Setting soon.</h1>
+    <p class="soon-lede" id="soonLede"></p>
 
     <div class="soon-countdown" id="countdown" role="timer" aria-live="off"></div>
 
@@ -44,25 +41,75 @@
      viewer's local midnight) so the countdown reads the same everywhere.
      Change this one line to move the launch date. */
   var LAUNCH = new Date('2026-08-17T00:00:00+05:30').getTime();
+  var DAY = 86400000;
+
+  /* Formatted in IST rather than the viewer's zone: the launch instant is
+     18:30 UTC the previous day, so an unzoned format would read
+     "16 August" to anyone west of India. Derived from LAUNCH so the date
+     on the page can never drift out of sync with the countdown. */
+  var LAUNCH_DATE = new Date(LAUNCH).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata'
+  });
+
+  /* The lede tracks the clock. The eight-day line only holds while more
+     than eight days remain — past that point a tile poured today really
+     would outlast the wait, so the joke inverts instead of quietly going
+     stale. Each tier applies while `remaining` is above its threshold. */
+  var LEDE_TIERS = [
+    {
+      above: 8 * DAY,
+      text: 'Every Grham tile spends eight days hardening in water before it is fit ' +
+            'to walk on. The website is taking marginally longer.'
+    },
+    {
+      above: DAY,
+      text: 'A tile poured in the workshop this morning would still be curing on ' +
+            'the day we open. We are, at last, keeping pace with the cement.'
+    },
+    {
+      above: 0,
+      text: 'Opening tomorrow. The floor is swept and the first samples are ' +
+            'already boxed.'
+    }
+  ];
 
   var UNITS = [
-    { label: 'Days', ms: 86400000 },
+    { label: 'Days', ms: DAY },
     { label: 'Hours', ms: 3600000 },
     { label: 'Minutes', ms: 60000 },
     { label: 'Seconds', ms: 1000 }
   ];
 
   var el = document.getElementById('countdown');
+  var eyebrowEl = document.getElementById('soonEyebrow');
+  var headingEl = document.getElementById('soonHeading');
+  var ledeEl = document.getElementById('soonLede');
   var timer = null;
+  var currentLede = null;
 
   function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  function syncLede(remaining) {
+    var text = LEDE_TIERS[LEDE_TIERS.length - 1].text;
+    for (var i = 0; i < LEDE_TIERS.length; i++) {
+      if (remaining > LEDE_TIERS[i].above) { text = LEDE_TIERS[i].text; break; }
+    }
+    // Only touch the DOM when the tier actually changes, not every second.
+    if (text !== currentLede) {
+      currentLede = text;
+      ledeEl.textContent = text;
+    }
+  }
 
   function renderLaunched() {
     if (timer) clearInterval(timer);
     el.classList.add('is-launched');
-    // The pre-launch pitch ("we're not open yet, but write to us") stops
-    // making sense the moment the site is live — "Step inside" takes over.
+    // Everything phrased as "not open yet" stops making sense the moment
+    // the site is live: the pre-launch pitch and the lede hide, the
+    // headline resolves, and "Step inside" takes over.
     document.querySelector('.soon-body').classList.add('is-launched');
+    eyebrowEl.textContent = 'Now open';
+    headingEl.textContent = 'Set.';
     el.innerHTML =
       '<p class="soon-launched-line">The floor is laid.</p>' +
       '<a href="index.html" class="btn btn-primary btn-lg">Step inside →</a>';
@@ -74,6 +121,9 @@
       renderLaunched();
       return;
     }
+
+    eyebrowEl.textContent = 'Launching ' + LAUNCH_DATE;
+    syncLede(remaining);
 
     el.innerHTML = UNITS.map(function (unit) {
       var value = Math.floor(remaining / unit.ms);
