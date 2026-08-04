@@ -1065,6 +1065,88 @@ button { font: inherit; }
   .mark-icon-desktop { display: block; }
 }
 
+/* ---------- Launching-soon page ---------- */
+/* Height accounts for the brand strip main.js appends after .center-page,
+   so the whole page settles into exactly one viewport. */
+.soon-page { min-height: calc(100vh - 84px); }
+.soon-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  box-sizing: border-box;
+}
+.soon-logo { height: 40px; width: auto; margin-bottom: 34px; }
+.soon-eyebrow { color: var(--red); }
+.soon-body h1 { font-size: 42px; margin: 14px 0 0; }
+.soon-lede {
+  margin: 18px 0 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  max-width: 44ch;
+}
+
+.soon-countdown { display: flex; gap: 10px; margin-top: 38px; }
+.soon-unit {
+  min-width: 68px;
+  padding: 15px 10px;
+  background: var(--navy);
+  color: var(--ivory);
+  box-sizing: border-box;
+}
+.soon-value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.soon-label {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(243, 238, 228, .6);
+}
+
+/* Post-launch state: the countdown block becomes the way in. */
+.soon-countdown.is-launched { flex-direction: column; align-items: center; gap: 20px; }
+.soon-launched-line {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--ink);
+}
+
+.soon-note { margin: 26px 0 0; font-size: 14px; color: var(--text-muted); max-width: 42ch; }
+.soon-body .btn { margin-top: 26px; }
+.soon-body.is-launched .soon-pre { display: none; }
+
+@media (min-width: 768px) {
+  .soon-page { min-height: calc(100vh - 100px); }
+  .soon-logo { height: 48px; margin-bottom: 40px; }
+  .soon-body h1 { font-size: 60px; }
+  .soon-lede { font-size: 17px; }
+  .soon-countdown { gap: 14px; margin-top: 44px; }
+  .soon-unit { min-width: 92px; padding: 20px 14px; }
+  .soon-value { font-size: 40px; }
+  .soon-label { font-size: 10.5px; }
+  .soon-launched-line { font-size: 28px; }
+}
+
+@media (min-width: 1200px) {
+  .soon-logo { height: 56px; }
+  .soon-body h1 { font-size: 76px; }
+  .soon-countdown { gap: 16px; }
+  .soon-unit { min-width: 110px; padding: 24px 16px; }
+  .soon-value { font-size: 50px; }
+}
+
 /* ---------- Brand pattern strip (after the footer, every page) ---------- */
 .brand-strip {
   width: 100%;

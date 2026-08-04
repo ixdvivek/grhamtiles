@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Launching soon — Grham Tiles</title>
+<meta name="description" content="Grham Tiles opens 17 August 2026 — handmade Athangudi tiles from Kerala. The workshop is already taking orders and sending samples.">
+<link rel="icon" href="assets/images/mark.png" type="image/png">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<script>document.documentElement.classList.add('grham-loading');</script>
+
+<div class="center-page soon-page">
+  <div class="soon-body">
+    <a href="index.html" aria-label="Grham Tiles">
+      <img class="soon-logo" src="assets/images/logo-horizontal.png" alt="Grham Tiles">
+    </a>
+
+    <span class="eyebrow soon-eyebrow">Launching 17 August 2026</span>
+    <h1>Setting soon.</h1>
+    <p class="soon-lede">
+      Every Grham tile spends eight days hardening in water before it is fit
+      to walk on. The website is taking marginally longer.
+    </p>
+
+    <div class="soon-countdown" id="countdown" role="timer" aria-live="off"></div>
+
+    <div class="soon-pre">
+      <p class="soon-note">
+        The workshop, however, is wide open — we are already taking orders and
+        sending samples.
+      </p>
+
+      <a href="mailto:hello@grhamtiles.in" class="btn btn-primary btn-lg">Write to us</a>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  /* Midnight IST on launch day — pinned to a fixed instant (not the
+     viewer's local midnight) so the countdown reads the same everywhere.
+     Change this one line to move the launch date. */
+  var LAUNCH = new Date('2026-08-17T00:00:00+05:30').getTime();
+
+  var UNITS = [
+    { label: 'Days', ms: 86400000 },
+    { label: 'Hours', ms: 3600000 },
+    { label: 'Minutes', ms: 60000 },
+    { label: 'Seconds', ms: 1000 }
+  ];
+
+  var el = document.getElementById('countdown');
+  var timer = null;
+
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  function renderLaunched() {
+    if (timer) clearInterval(timer);
+    el.classList.add('is-launched');
+    // The pre-launch pitch ("we're not open yet, but write to us") stops
+    // making sense the moment the site is live — "Step inside" takes over.
+    document.querySelector('.soon-body').classList.add('is-launched');
+    el.innerHTML =
+      '<p class="soon-launched-line">The floor is laid.</p>' +
+      '<a href="index.html" class="btn btn-primary btn-lg">Step inside →</a>';
+  }
+
+  function render() {
+    var remaining = LAUNCH - Date.now();
+    if (remaining <= 0) {
+      renderLaunched();
+      return;
+    }
+
+    el.innerHTML = UNITS.map(function (unit) {
+      var value = Math.floor(remaining / unit.ms);
+      remaining -= value * unit.ms;
+      return '' +
+        '<div class="soon-unit">' +
+          '<span class="soon-value">' + pad(value) + '</span>' +
+          '<span class="soon-label">' + unit.label + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  render();
+  // Recomputed from the fixed target each tick rather than decremented, so
+  // a throttled background tab can't drift the clock.
+  timer = setInterval(render, 1000);
+})();
+</script>
+</body>
+</html>
