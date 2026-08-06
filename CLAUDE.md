@@ -117,11 +117,11 @@ helper added alongside the data-fetch layer above.
    tiles/projects/posts, matching the shapes in `studio/schemaTypes/`.
    The fallback catalog in `data.js` is a good reference for what fields
    to fill in per document.
-5. Decide on CORS: Sanity's API needs your site's origin
-   (`https://ixdvivek.github.io`) added to the project's allowed
-   origins list (sanity.io/manage → API → CORS origins) or the
-   client-side fetch will be blocked by the browser even though the
-   dataset is public-readable.
+5. Decide on CORS: Sanity's API needs your site's actual origin (e.g.
+   `https://grhamdecors.github.io`, or your custom domain if one's
+   attached) added to the project's allowed origins list
+   (sanity.io/manage → API → CORS origins) or the client-side fetch will
+   be blocked by the browser even though the dataset is public-readable.
 6. The contact/enquiry form (`contact.html`) is unrelated to this and
    still doesn't submit anywhere — it's a no-op that redirects straight
    to `thank-you.html`. Sanity write tokens can't safely live in client

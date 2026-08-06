@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["claude/grham-tiles-homepage-8pm2do"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
