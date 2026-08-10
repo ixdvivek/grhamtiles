@@ -10,7 +10,7 @@
    since every page already just reads GRHAM_TILES / GRHAM_PROJECTS /
    GRHAM_POSTS after awaiting grhamDataReady. */
 (function (global) {
-  var SANITY_PROJECT_ID = '6rmlud2u';
+  var SANITY_PROJECT_ID = '9coo783b';
   var SANITY_DATASET = 'production';
   var SANITY_API_VERSION = '2024-01-01';
   var SANITY_FETCH_TIMEOUT_MS = 2500;

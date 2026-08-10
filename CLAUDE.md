@@ -29,7 +29,7 @@ studio/                    Sanity Studio (the CMS) — see below.
 ## Backend: Sanity
 
 Content (tiles, portfolio projects, blog posts) is backed by a Sanity
-project (ID `6rmlud2u`, dataset `production`). The site stays fully
+project (ID `9coo783b`, dataset `production`). The site stays fully
 static — pages fetch content client-side from Sanity's CDN API at load
 time, no server or build step involved.
 
@@ -40,7 +40,7 @@ time, no server or build step involved.
   `GRHAM_PROJECTS` / `GRHAM_POSTS` immediately — the site never has a
   blank first paint.
 - `data.js` then fires a single GROQ query at Sanity's CDN endpoint
-  (`https://6rmlud2u.apicdn.sanity.io/...`) requesting all three
+  (`https://9coo783b.apicdn.sanity.io/...`) requesting all three
   collections at once, with image/gallery fields dereferenced to plain
   URLs (`"image": image.asset->url`).
 - `window.grhamDataReady` is a promise that resolves once either the
