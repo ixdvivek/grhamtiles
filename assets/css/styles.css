@@ -354,16 +354,9 @@ button { font: inherit; }
   margin-top: 28px;
   position: relative;
 }
-.craft-image span {
-  position: absolute; bottom: 14px; left: 20px; right: 20px;
-  font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(255, 255, 255, .85);
-}
-
 @media (min-width: 768px) {
   .craft-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
   .craft-image { aspect-ratio: 4 / 5; margin-top: 0; }
-  .craft-image span { bottom: 16px; }
   .section p.lede { max-width: 32ch; }
 }
 
