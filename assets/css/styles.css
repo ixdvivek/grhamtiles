@@ -643,7 +643,7 @@ button { font: inherit; }
 .about-hero { padding: 40px 20px 0; box-sizing: border-box; }
 .about-hero h1 { font-size: var(--text-hero); line-height: 1.06; }
 .about-hero-photo {
-  margin-top: 32px; width: 100%; aspect-ratio: 4 / 3; background: var(--oxide-thara);
+  margin-top: 32px; width: 100%; aspect-ratio: 4 / 5; background: var(--oxide-thara);
   position: relative; box-sizing: border-box;
 }
 
