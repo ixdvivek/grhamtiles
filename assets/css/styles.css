@@ -650,12 +650,8 @@ button { font: inherit; }
 .about-hero { padding: 40px 20px 0; box-sizing: border-box; }
 .about-hero h1 { font-size: var(--text-hero); line-height: 1.06; }
 .about-hero-photo {
-  margin-top: 32px; width: 100%; aspect-ratio: 4 / 5; background: var(--oxide-thara);
+  margin-top: 32px; width: 100%; aspect-ratio: 4 / 3; background: var(--oxide-thara);
   position: relative; box-sizing: border-box;
-}
-.about-hero-photo span {
-  position: absolute; bottom: 14px; left: 20px; right: 20px;
-  font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255, 255, 255, .85);
 }
 
 @media (min-width: 768px) {
