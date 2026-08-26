@@ -129,9 +129,7 @@ grhamDataReady.then(function () {
   document.getElementById('articleTitle').textContent = post.title;
   document.getElementById('articleDate').textContent = post.date;
   document.getElementById('articleMedia').setAttribute('style', grhamMediaStyle(post.swatch, post.image));
-  document.getElementById('articleBody').innerHTML = post.body.map(function (p) {
-    return '<p>' + p + '</p>';
-  }).join('');
+  document.getElementById('articleBody').innerHTML = grhamRenderBody(post.body);
 
   var related = GRHAM_POSTS.filter(function (p) { return p.slug !== post.slug; }).slice(0, 2);
   document.getElementById('articleRelated').innerHTML = related.map(function (r) {

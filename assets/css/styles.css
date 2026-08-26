@@ -936,6 +936,15 @@ button { font: inherit; }
 .share-popup.is-visible { opacity: 1; visibility: visible; }
 .article-media { width: 100%; aspect-ratio: 4 / 3; margin-top: 24px; }
 .article-body { padding: 24px 20px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; font-size: 16px; line-height: 1.75; }
+.article-body h2 { font-family: var(--font-display); font-size: 1.5em; line-height: 1.2; margin: 4px 0 0; }
+.article-body h3 { font-family: var(--font-display); font-size: 1.22em; line-height: 1.25; margin: 4px 0 0; }
+.article-body blockquote { margin: 0; padding-left: 20px; border-left: 3px solid var(--red); font-style: italic; color: var(--text-muted); }
+.article-body ul, .article-body ol { margin: 0; padding-left: 1.25em; }
+.article-body li + li { margin-top: 8px; }
+.article-body strong { font-weight: 700; }
+.article-body a { color: var(--red); text-decoration: underline; }
+.article-inline-image img { width: 100%; display: block; }
+.article-inline-image .photo-caption { margin-top: 8px; }
 .article-related { margin-top: 56px; padding: 0 20px 64px; box-sizing: border-box; }
 .article-related-label {
   font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-muted);

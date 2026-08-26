@@ -36,10 +36,54 @@ export default defineType({
       name: 'body',
       title: 'Body',
       description:
-        'One paragraph per entry (matches the site\'s current plain-paragraph rendering — ' +
-        'no rich text yet, see CLAUDE.md if that needs to change).',
+        'Rich text. Use the toolbar for headings (H2/H3), bold/italic and links, and the ' +
+        '"+" button to drop in an inline photo wherever it belongs in the text.',
       type: 'array',
-      of: [{type: 'text', rows: 3}],
+      of: [
+        {
+          type: 'block',
+          styles: [
+            {title: 'Normal', value: 'normal'},
+            {title: 'Heading', value: 'h2'},
+            {title: 'Subheading', value: 'h3'},
+            {title: 'Quote', value: 'blockquote'},
+          ],
+          lists: [
+            {title: 'Bulleted list', value: 'bullet'},
+            {title: 'Numbered list', value: 'number'},
+          ],
+          marks: {
+            decorators: [
+              {title: 'Bold', value: 'strong'},
+              {title: 'Italic', value: 'em'},
+            ],
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'Link',
+                fields: [
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'URL',
+                    validation: (rule) => rule.uri({scheme: ['http', 'https', 'mailto']}),
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        {
+          type: 'image',
+          title: 'Inline photo',
+          options: {hotspot: true},
+          fields: [
+            {name: 'alt', type: 'string', title: 'Alt text', description: 'For screen readers and SEO.'},
+            {name: 'caption', type: 'string', title: 'Caption (optional)'},
+          ],
+        },
+      ],
       validation: (rule) => rule.required().min(1),
     }),
     defineField({

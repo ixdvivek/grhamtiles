@@ -64,6 +64,83 @@
     return new URLSearchParams(window.location.search).get(name);
   }
 
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  var BODY_BLOCK_TAGS = { normal: 'p', h2: 'h2', h3: 'h3', h4: 'h3', blockquote: 'blockquote' };
+
+  function renderSpans(children, markDefs) {
+    markDefs = markDefs || [];
+    return (children || []).map(function (span) {
+      var html = escapeHtml(span.text || '');
+      (span.marks || []).forEach(function (mark) {
+        if (mark === 'strong') { html = '<strong>' + html + '</strong>'; return; }
+        if (mark === 'em') { html = '<em>' + html + '</em>'; return; }
+        var def = markDefs.filter(function (d) { return d._key === mark; })[0];
+        if (def && def._type === 'link' && def.href) {
+          html = '<a href="' + escapeHtml(def.href) + '" target="_blank" rel="noopener noreferrer">' + html + '</a>';
+        }
+      });
+      return html;
+    }).join('');
+  }
+
+  function renderInlineImage(block) {
+    if (!block.asset) return '';
+    var caption = block.caption ? '<div class="photo-caption">' + escapeHtml(block.caption) + '</div>' : '';
+    return '' +
+      '<div class="article-inline-image">' +
+        '<img src="' + block.asset + '" alt="' + escapeHtml(block.alt || '') + '" loading="lazy">' +
+        caption +
+      '</div>';
+  }
+
+  /* post.body is Sanity Portable Text: an array of typed block/image
+     objects (headings, marks, inline images all come through here). The
+     built-in fallback catalog in data.js predates that and still uses
+     plain paragraph strings, so both shapes are handled — see CLAUDE.md. */
+  function renderBody(body) {
+    if (!Array.isArray(body) || !body.length) return '';
+    if (typeof body[0] === 'string') {
+      return body.map(function (p) { return '<p>' + escapeHtml(p) + '</p>'; }).join('');
+    }
+
+    var html = '';
+    var listBuffer = [];
+    var listType = null;
+
+    function flushList() {
+      if (!listBuffer.length) return;
+      var tag = listType === 'number' ? 'ol' : 'ul';
+      html += '<' + tag + '>' + listBuffer.map(function (li) { return '<li>' + li + '</li>'; }).join('') + '</' + tag + '>';
+      listBuffer = [];
+      listType = null;
+    }
+
+    body.forEach(function (block) {
+      if (block._type === 'image') {
+        flushList();
+        html += renderInlineImage(block);
+        return;
+      }
+      if (block._type !== 'block') return;
+
+      if (block.listItem) {
+        if (listType && listType !== block.listItem) flushList();
+        listType = block.listItem;
+        listBuffer.push(renderSpans(block.children, block.markDefs));
+        return;
+      }
+      flushList();
+      var tag = BODY_BLOCK_TAGS[block.style] || 'p';
+      html += '<' + tag + '>' + renderSpans(block.children, block.markDefs) + '</' + tag + '>';
+    });
+    flushList();
+
+    return html;
+  }
+
   global.grhamIsLightSwatch = isLightSwatch;
   global.grhamMediaStyle = mediaStyle;
   global.grhamSwatchDotsHTML = swatchDotsHTML;
@@ -71,4 +148,5 @@
   global.grhamPortfolioCardHTML = portfolioCardHTML;
   global.grhamBlogCardHTML = blogCardHTML;
   global.grhamGetQueryParam = getQueryParam;
+  global.grhamRenderBody = renderBody;
 })(window);

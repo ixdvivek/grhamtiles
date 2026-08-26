@@ -269,7 +269,8 @@
         '"image": image.asset->url, "gallery": gallery[].asset->url' +
       '},' +
       '"posts": *[_type == "post"] | order(date desc){' +
-        '"slug": slug.current, title, date, excerpt, body, swatch, "image": image.asset->url' +
+        '"slug": slug.current, title, date, excerpt, swatch, "image": image.asset->url, ' +
+        '"body": body[]{..., _type == "image" => {"asset": asset->url}}' +
       '}' +
     '}';
 

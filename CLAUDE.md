@@ -89,13 +89,23 @@ and renders plain text otherwise. Keep this tolerant-resolution behavior;
 don't make it a hard reference array without checking the content team
 is fine with losing untracked mentions.
 
-`post.body` is a plain array of paragraph strings, matching the site's
-current rendering (`post.body.map(p => '<p>'+p+'</p>')`). It is
-deliberately **not** Sanity's rich-text (Portable Text) type — rendering
-Portable Text client-side needs a parser library, which this
-no-dependencies static site doesn't otherwise pull in. Upgrading to real
-rich text is a fine future step; it just needs a small HTML-rendering
-helper added alongside the data-fetch layer above.
+`post.body` is Sanity's rich-text (Portable Text) type — the Studio's
+`body` field (`studio/schemaTypes/post.ts`) offers headings (H2/H3),
+bold/italic, links, bulleted/numbered lists, and inline photos via the
+block editor's "+" button. Rendered client-side by a small hand-rolled
+renderer (`grhamRenderBody` in `assets/js/site.js`) rather than a
+Portable Text parser library, to keep this a no-dependencies static
+site — it walks the block/span/image array and builds the equivalent
+HTML directly. The GROQ query (`assets/js/data.js`) dereferences inline
+image assets to plain URLs the same way tile/project photos are
+(`_type == "image" => {"asset": asset->url}`).
+
+`grhamRenderBody` also still accepts the old shape (a plain array of
+paragraph strings) purely so the hardcoded fallback catalog in
+`data.js` — which predates Portable Text and hasn't been rewritten —
+keeps rendering correctly. Real Sanity content always comes back as
+Portable Text blocks; only the fallback still uses the string-array
+shape.
 
 ### Setup already done
 
