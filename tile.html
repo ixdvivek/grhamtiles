@@ -188,7 +188,7 @@ grhamDataReady.then(function () {
   function syncStickyVisibility() {
     var inline = document.getElementById('tileEnquireInline');
     var wide = window.innerWidth >= 768;
-    inline.style.display = wide ? 'block' : 'none';
+    inline.style.display = wide ? 'flex' : 'none';
     document.getElementById('stickyBar').style.display = wide ? 'none' : 'flex';
   }
   syncStickyVisibility();
