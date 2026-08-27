@@ -7,7 +7,11 @@
   var customizerState = {
     activeMouldSlug: null,
     // mouldSlug -> { regionId: pigmentSlug }
-    assignments: {}
+    assignments: {},
+    // Stage 2: per-cell rotation (degrees), row-major [TL, TR, BL, BR].
+    // Pre-set to a pinwheel rather than all-zero, so the rotation
+    // feature is visibly doing something the moment the page loads.
+    stage2Rotations: [0, 90, 270, 180]
   };
 
   function pigmentBySlug(slug) {
@@ -174,8 +178,104 @@
     document.addEventListener('DOMContentLoaded', init);
   })();
 
-  /* Exposed so later stages (and stage 1 itself, above) can read the
-     current design without re-deriving it. */
+  /* ============================================================
+     Stage 2 — Repeat Unit / Rotation Composer
+     Reads the live, colored SVG straight out of Stage 1's editor host
+     (#customizerSvgHost) — no duplicated tile data — and re-renders
+     whenever Stage 1 reports a mould or color change, so this stays in
+     sync without Stage 1 needing to know Stage 2 exists.
+     ============================================================ */
+  (function stage2() {
+    var GRID = 2; // fixed 2x2 for this MVP; the rest of the code doesn't
+                  // assume 2 anywhere but the constant, so a size picker
+                  // later just changes this and the grid markup.
+    var CELL_PX = 260; // on-screen render size per tile copy
+
+    var gridHost, canvas, ctx;
+    var rotations = customizerState.stage2Rotations;
+
+    function cycleRotation(index) {
+      rotations[index] = (rotations[index] + 90) % 360;
+      renderRotationControls();
+      renderTexture();
+    }
+
+    function renderRotationControls() {
+      gridHost.innerHTML = rotations.map(function (deg, i) {
+        return '' +
+          '<button type="button" class="rotate-cell" data-index="' + i + '" aria-label="Rotate this copy">' +
+            '<span class="rotate-cell-icon" style="transform:rotate(' + deg + 'deg)">↻</span>' +
+            '<span class="rotate-cell-deg">' + deg + '°</span>' +
+          '</button>';
+      }).join('');
+      gridHost.querySelectorAll('.rotate-cell').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          cycleRotation(parseInt(btn.getAttribute('data-index'), 10));
+        });
+      });
+    }
+
+    /* Serializes the live Stage 1 SVG (including the inline
+       custom-property colors JS set on it) to a data URL so it can be
+       drawn onto <canvas> via an Image — canvas has no direct way to
+       paint a live DOM SVG element, so this round-trip through a data
+       URL is the standard way to rasterize one. */
+    function activeTileImage() {
+      var svgEl = document.querySelector('#customizerSvgHost svg');
+      if (!svgEl) return Promise.reject(new Error('No active tile to compose'));
+      var markup = new XMLSerializer().serializeToString(svgEl);
+      var dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(markup);
+      return new Promise(function (resolve, reject) {
+        var img = new Image();
+        img.onload = function () { resolve(img); };
+        img.onerror = reject;
+        img.src = dataUrl;
+      });
+    }
+
+    function renderTexture() {
+      activeTileImage().then(function (img) {
+        var size = GRID * CELL_PX;
+        canvas.width = size;
+        canvas.height = size;
+        ctx.clearRect(0, 0, size, size);
+        for (var row = 0; row < GRID; row++) {
+          for (var col = 0; col < GRID; col++) {
+            var index = row * GRID + col;
+            var cx = col * CELL_PX + CELL_PX / 2;
+            var cy = row * CELL_PX + CELL_PX / 2;
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(rotations[index] * Math.PI / 180);
+            ctx.drawImage(img, -CELL_PX / 2, -CELL_PX / 2, CELL_PX, CELL_PX);
+            ctx.restore();
+          }
+        }
+        global.dispatchEvent(new CustomEvent('grham:customizer:texture-changed', { detail: { canvas: canvas } }));
+      }).catch(function (err) {
+        console.warn('Grham customizer: could not render repeat texture —', err.message);
+      });
+    }
+
+    function init() {
+      gridHost = document.getElementById('customizerRotationGrid');
+      canvas = document.getElementById('customizerTextureCanvas');
+      if (!gridHost || !canvas) return; // Stage 2 markup isn't on this page
+
+      ctx = canvas.getContext('2d');
+      renderRotationControls();
+      renderTexture();
+
+      // Stage 1 changed the mould or a color — recompose the texture.
+      global.addEventListener('grham:customizer:mould-changed', renderTexture);
+      global.addEventListener('grham:customizer:colors-changed', renderTexture);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+
+  /* Exposed so later stages (and earlier stages' own code, above) can
+     read the current design without re-deriving it. */
   global.grhamCustomizer = {
     state: customizerState,
     mouldBySlug: mouldBySlug,

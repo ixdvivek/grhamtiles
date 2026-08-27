@@ -1323,6 +1323,32 @@ html.grham-loading body { visibility: hidden; }
 .region-label { font-size: 14px; font-weight: 500; flex: 1 1 auto; }
 .region-pigment-name { font-size: 12px; color: var(--text-muted); }
 
+/* Stage 2 — rotation composer */
+.stage2-layout { display: grid; gap: var(--space-6); }
+.rotation-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
+  background: var(--border-strong); max-width: 280px;
+  aspect-ratio: 1 / 1;
+}
+.rotate-cell {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  background: var(--bg-card); border: none; cursor: pointer;
+  font-family: var(--font-body); color: var(--ink);
+  transition: background var(--speed) var(--ease);
+}
+.rotate-cell:hover { background: var(--stone); }
+.rotate-cell-icon { font-size: 26px; transition: transform var(--speed) var(--ease); display: inline-block; }
+.rotate-cell-deg { font-size: 12px; color: var(--text-muted); }
+
+.texture-preview {
+  background: var(--bg-card);
+  padding: var(--space-5);
+  box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+}
+.texture-preview canvas { width: 100%; height: auto; max-width: 480px; display: block; }
+
 @media (min-width: 900px) {
   .customizer-layout { grid-template-columns: 1.1fr .9fr; align-items: start; }
+  .stage2-layout { grid-template-columns: .8fr 1.2fr; align-items: start; }
 }
