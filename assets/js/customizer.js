@@ -274,6 +274,198 @@
     document.addEventListener('DOMContentLoaded', init);
   })();
 
+  /* ============================================================
+     Stage 3 — Dimension Input + Perspective Placement
+     ============================================================ */
+  (function stage3() {
+    var REPEAT_UNIT_INCHES = 16; // Stage 2's 2x2 grid of 8" tiles
+    var REPEAT_UNIT_FT = REPEAT_UNIT_INCHES / 12;
+    var CELL_PX = 60; // on-screen px per repeat unit in the tiled floor texture
+    var GRID_SIZE = 16; // mesh-warp subdivisions; higher = smoother curves, slower
+
+    var lengthInput, widthInput, infoHost, statusHost, photoInput;
+    var stageHost, imgEl, canvas, ctx;
+    var corners = null; // [{x,y}] x4 in the image's natural pixel space, TL/TR/BR/BL
+    var handles = [];
+    var floorTextureCanvas = document.createElement('canvas');
+    var renderQueued = false;
+
+    function queueRender() {
+      if (renderQueued) return;
+      renderQueued = true;
+      requestAnimationFrame(function () { renderQueued = false; renderWarp(); });
+    }
+
+    /* A simple synthetic "empty room" photo so Stage 3 never starts on
+       a blank canvas — an actual photo upload replaces it, at which
+       point the corner handles reset to a centered guess since we have
+       no idea where the floor is in an arbitrary photo. */
+    function buildPlaceholderPhoto() {
+      var w = 900, h = 600;
+      var c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      var pctx = c.getContext('2d');
+
+      pctx.fillStyle = '#DCD3C4';
+      pctx.fillRect(0, 0, w, h);
+
+      var floor = [{ x: 230, y: 265 }, { x: 670, y: 265 }, { x: 860, y: 580 }, { x: 40, y: 580 }];
+      var grad = pctx.createLinearGradient(0, 260, 0, 580);
+      grad.addColorStop(0, '#CFC6B4');
+      grad.addColorStop(1, '#B6A98F');
+      pctx.fillStyle = grad;
+      pctx.beginPath();
+      pctx.moveTo(floor[0].x, floor[0].y);
+      floor.slice(1).forEach(function (p) { pctx.lineTo(p.x, p.y); });
+      pctx.closePath();
+      pctx.fill();
+
+      pctx.strokeStyle = 'rgba(28,26,23,.35)';
+      pctx.lineWidth = 3;
+      pctx.beginPath();
+      pctx.moveTo(floor[0].x, floor[0].y);
+      pctx.lineTo(floor[1].x, floor[1].y);
+      pctx.stroke();
+
+      return { dataUrl: c.toDataURL('image/png'), corners: floor, width: w, height: h };
+    }
+
+    function defaultCornersFor(width, height) {
+      // A centered inset rectangle — a reasonable starting guess for an
+      // arbitrary uploaded photo, since we can't detect the floor.
+      var mx = width * 0.18, my = height * 0.22;
+      return [
+        { x: mx, y: my }, { x: width - mx, y: my },
+        { x: width - mx, y: height - my }, { x: mx, y: height - my }
+      ];
+    }
+
+    function renderHandles() {
+      corners.forEach(function (corner, i) {
+        var leftPct = (corner.x / imgEl.naturalWidth) * 100;
+        var topPct = (corner.y / imgEl.naturalHeight) * 100;
+        handles[i].style.left = leftPct + '%';
+        handles[i].style.top = topPct + '%';
+      });
+    }
+
+    function buildFloorTexture() {
+      var lengthFt = parseFloat(lengthInput.value);
+      var widthFt = parseFloat(widthInput.value);
+      if (!(lengthFt > 0)) lengthFt = 12;
+      if (!(widthFt > 0)) widthFt = 10;
+
+      var repsX = Math.max(1, Math.ceil(lengthFt / REPEAT_UNIT_FT));
+      var repsY = Math.max(1, Math.ceil(widthFt / REPEAT_UNIT_FT));
+
+      var sourceTexture = document.getElementById('customizerTextureCanvas');
+      if (!sourceTexture) return null;
+
+      floorTextureCanvas.width = repsX * CELL_PX;
+      floorTextureCanvas.height = repsY * CELL_PX;
+      var fctx = floorTextureCanvas.getContext('2d');
+
+      var cell = document.createElement('canvas');
+      cell.width = CELL_PX; cell.height = CELL_PX;
+      cell.getContext('2d').drawImage(sourceTexture, 0, 0, CELL_PX, CELL_PX);
+
+      var pattern = fctx.createPattern(cell, 'repeat');
+      fctx.fillStyle = pattern;
+      fctx.fillRect(0, 0, floorTextureCanvas.width, floorTextureCanvas.height);
+
+      infoHost.textContent = lengthFt + ' ft × ' + widthFt + ' ft ≈ ' + repsX + ' × ' + repsY +
+        ' repeat units (' + REPEAT_UNIT_INCHES + '″ each)';
+
+      return floorTextureCanvas;
+    }
+
+    function renderWarp() {
+      if (!corners) return;
+      var texture = buildFloorTexture();
+      if (!texture) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      grhamGeometry.warpTextureToQuad(ctx, texture, corners, GRID_SIZE);
+      renderHandles();
+    }
+
+    function loadImage(src, knownCorners) {
+      imgEl.onload = function () {
+        canvas.width = imgEl.naturalWidth;
+        canvas.height = imgEl.naturalHeight;
+        corners = knownCorners || defaultCornersFor(imgEl.naturalWidth, imgEl.naturalHeight);
+        queueRender();
+      };
+      imgEl.src = src;
+    }
+
+    function bindHandleDrag(index) {
+      var handle = handles[index];
+      var dragging = false;
+
+      handle.addEventListener('pointerdown', function (e) {
+        dragging = true;
+        handle.setPointerCapture(e.pointerId);
+        e.preventDefault();
+      });
+      handle.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        var rect = imgEl.getBoundingClientRect();
+        var nx = (e.clientX - rect.left) / rect.width * imgEl.naturalWidth;
+        var ny = (e.clientY - rect.top) / rect.height * imgEl.naturalHeight;
+        nx = Math.max(0, Math.min(imgEl.naturalWidth, nx));
+        ny = Math.max(0, Math.min(imgEl.naturalHeight, ny));
+        corners[index] = { x: nx, y: ny };
+        queueRender();
+      });
+      var endDrag = function () { dragging = false; };
+      handle.addEventListener('pointerup', endDrag);
+      handle.addEventListener('pointercancel', endDrag);
+    }
+
+    function init() {
+      stageHost = document.getElementById('photoStage');
+      if (!stageHost) return; // Stage 3 markup isn't on this page
+
+      lengthInput = document.getElementById('floorLength');
+      widthInput = document.getElementById('floorWidth');
+      infoHost = document.getElementById('dimensionInfo');
+      statusHost = document.getElementById('stage3Status');
+      photoInput = document.getElementById('photoUpload');
+      imgEl = document.getElementById('floorPhotoImg');
+      canvas = document.getElementById('warpOverlayCanvas');
+      ctx = canvas.getContext('2d');
+      handles = Array.prototype.slice.call(stageHost.querySelectorAll('.corner-handle'));
+
+      handles.forEach(function (_, i) { bindHandleDrag(i); });
+
+      lengthInput.addEventListener('input', queueRender);
+      widthInput.addEventListener('input', queueRender);
+
+      photoInput.addEventListener('change', function () {
+        var file = photoInput.files && photoInput.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          statusHost.textContent = 'Drag the four corners onto your floor area.';
+          loadImage(reader.result, null);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Stage 2's texture changed (rotation, or Stage 1's mould/color
+      // changed upstream of it) — recompose the warp with the new tile.
+      global.addEventListener('grham:customizer:texture-changed', queueRender);
+
+      var placeholder = buildPlaceholderPhoto();
+      statusHost.textContent = 'Drag the four corners to fit your own floor, or upload a photo.';
+      loadImage(placeholder.dataUrl, placeholder.corners);
+
+      window.addEventListener('resize', function () { queueRender(); });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+
   /* Exposed so later stages (and earlier stages' own code, above) can
      read the current design without re-deriving it. */
   global.grhamCustomizer = {

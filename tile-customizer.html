@@ -104,6 +104,39 @@
       </div>
     </div>
   </section>
+
+  <section class="customizer-stage" id="stage3">
+    <div class="customizer-stage-head">
+      <span class="eyebrow" style="color:var(--red)">Step 3</span>
+      <h2>Place it on your floor</h2>
+      <p>Enter your floor size, then drag the four corner handles onto the floor area in the photo. The pattern scales and warps to match.</p>
+    </div>
+
+    <div class="dimension-inputs">
+      <label>Length (ft)
+        <input type="number" id="floorLength" min="1" step="0.5" value="12">
+      </label>
+      <label>Width (ft)
+        <input type="number" id="floorWidth" min="1" step="0.5" value="10">
+      </label>
+      <span class="dimension-info" id="dimensionInfo"></span>
+    </div>
+
+    <div class="photo-upload-row">
+      <label class="btn btn-secondary btn-md" for="photoUpload">Upload your own photo</label>
+      <input type="file" id="photoUpload" accept="image/*" class="visually-hidden">
+      <span class="customizer-status" id="stage3Status"></span>
+    </div>
+
+    <div class="photo-stage" id="photoStage">
+      <img id="floorPhotoImg" alt="Room photo with the floor area to be tiled">
+      <canvas id="warpOverlayCanvas"></canvas>
+      <div class="corner-handle" data-corner="0"></div>
+      <div class="corner-handle" data-corner="1"></div>
+      <div class="corner-handle" data-corner="2"></div>
+      <div class="corner-handle" data-corner="3"></div>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -139,6 +172,7 @@
 </footer>
 
 <script src="assets/js/customizer-data.js"></script>
+<script src="assets/js/customizer-geometry.js"></script>
 <script src="assets/js/customizer.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
